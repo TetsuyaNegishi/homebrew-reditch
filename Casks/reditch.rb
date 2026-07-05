@@ -1,6 +1,6 @@
 cask "reditch" do
-  version "0.1.0"
-  sha256 "203861f94e6c00182bdb0ff1a9d32921d8eb5dd22783484e7c77d19141ddd96f"
+  version "0.1.1"
+  sha256 "93108674f352050adf1dd0c8b5b41ea21f845bf16fe373bf58c5fae21acbe0a0"
 
   url "https://github.com/TetsuyaNegishi/reditch/releases/download/v#{version}/Reditch-#{version}-arm64.dmg"
   name "Reditch"
@@ -16,6 +16,15 @@ cask "reditch" do
   depends_on macos: :big_sur
 
   app "Reditch.app"
+
+  postflight do
+    # Reditch is only ad-hoc signed (no Apple Developer ID / notarization yet),
+    # so the quarantine flag Homebrew applies makes Gatekeeper report the app
+    # as "damaged" instead of showing the usual unidentified-developer prompt.
+    system_command "/usr/bin/xattr",
+                   args: ["-cr", "#{appdir}/Reditch.app"],
+                   sudo: false
+  end
 
   zap trash: [
     "~/Library/Application Support/Reditch",
